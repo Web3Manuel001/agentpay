@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
 
 export default function ProtocolHub() {
-  const { login, logout, authenticated, user } = usePrivy();
+  let login = () => {}, logout = () => {}, authenticated = false, user: any = null;
+try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = p.authenticated; user = p.user; } catch {}
   const [tab, setTab] = useState<'sdk' | 'middleware'>('sdk');
   const [copied, setCopied] = useState(false);
   const [currentBlock, setCurrentBlock] = useState(19842109);
