@@ -29,3 +29,9 @@ AgentPay provides native, decentralized financial rails for the machine-to-machi
 ---
 
 ## 🏛️ Architecture
+
+## 📜 Verified Smart Contracts (Base Sepolia)
+
+* **AgentVault Core:** [`0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347`](https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347)
+* **Deployment Tx:** [`0x3d50d610088a53bb26e13329b8c37c2d5c120bbfb8a3824d7c4adc0199e9acdc`](https://sepolia.basescan.org/tx/0x3d50d610088a53bb26e13329b8c37c2d5c120bbfb8a3824d7c4adc0199e9acdc)
+* **Network:** Base Sepolia (Chain ID: `84532`)
