@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { usePrivy } from '@privy-io/react-auth';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -11,17 +13,22 @@ import {
   ExternalLink, 
   CheckCircle2, 
   ChevronRight,
-  TrendingUp,
-  Activity
+  LogOut,
+  User,
+  Wallet
 } from 'lucide-react';
 
 export default function Home() {
+  const { login, logout, authenticated, user } = usePrivy();
   const [copied, setCopied] = useState(false);
   const [tab, setTab] = useState<'client' | 'middleware'>('client');
   const [allowance, setAllowance] = useState(25);
   const [directive, setDirective] = useState("Audit Base TVL, check ETH spot price, and pay 2.50 USDC for hosting.");
   const [status, setStatus] = useState<'idle' | 'running' | 'success'>('idle');
   const [report, setReport] = useState<any>(null);
+
+  const walletAddress = user?.wallet?.address;
+  const userIdentifier = user?.email?.address || (walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : null);
 
   const copyInstall = () => {
     navigator.clipboard.writeText('npm install @agentpay/sdk viem');
@@ -42,6 +49,20 @@ export default function Home() {
       const data = await res.json();
       setReport(data);
       setStatus('success');
+
+      // Save errand history to Supabase if authenticated
+      if (authenticated && user) {
+        await supabase.from('errands').insert([
+          {
+            user_id: user.id,
+            wallet_address: walletAddress || 'embedded-wallet',
+            directive,
+            market_data: data.market,
+            payment_tx: data.payment?.txHash || null,
+            status: 'COMPLETED',
+          },
+        ]);
+      }
     } catch {
       setStatus('idle');
     }
@@ -59,15 +80,15 @@ export default function Home() {
               <span>Base L2 Settlement</span>
             </span>
             <span className="text-zinc-700">/</span>
-            <span>Intelligence: <span className="text-zinc-200">Qwen 3.8 LPU</span></span>
+            <span>Identity: <span className="text-zinc-200">Privy Social Wallets</span></span>
             <span className="hidden sm:inline text-zinc-700">/</span>
-            <span className="hidden sm:inline">Protocol Standard: <span className="text-zinc-200">x402 v2</span></span>
+            <span className="hidden sm:inline">Memory: <span className="text-zinc-200">Supabase Postgres</span></span>
           </div>
           <span className="text-zinc-500 hidden sm:inline">Non-Custodial Architecture</span>
         </div>
       </div>
 
-      {/* 2. NAVIGATION */}
+      {/* 2. NAVIGATION WITH PRIVY AUTH */}
       <header className="border-b border-zinc-800/60 sticky top-0 z-50 bg-[#09090b]/80 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
@@ -78,27 +99,41 @@ export default function Home() {
             <Badge variant="outline" className="ml-1 text-[9px] text-zinc-400">Base Mainnet Ready</Badge>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <a 
               href="https://github.com/Web3Manuel001/agentpay" 
               target="_blank" 
-              className="text-xs font-mono text-zinc-400 hover:text-zinc-100 transition flex items-center space-x-1"
+              className="text-xs font-mono text-zinc-400 hover:text-zinc-100 transition hidden sm:flex items-center space-x-1"
             >
               <span>GitHub</span>
               <ExternalLink className="w-3 h-3 text-zinc-500" />
             </a>
-            <Button variant="default" size="sm" asChild>
-              <a href="#demo">Launch Protocol</a>
-            </Button>
+
+            {/* PRIVY AUTH BUTTON */}
+            {authenticated ? (
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-xs font-mono text-zinc-200">
+                  <Wallet className="w-3 h-3 text-emerald-400" />
+                  <span>{userIdentifier}</span>
+                </div>
+                <Button variant="ghost" size="icon" onClick={logout} className="h-8 w-8 text-zinc-400 hover:text-zinc-100">
+                  <LogOut className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            ) : (
+              <Button variant="default" size="sm" onClick={login} className="text-xs font-semibold">
+                <span>Sign In with Google</span>
+              </Button>
+            )}
           </div>
         </div>
       </header>
 
-      {/* 3. HERO: SHADCN MONOCHROME */}
+      {/* 3. HERO SECTION */}
       <section className="max-w-4xl mx-auto px-6 pt-24 pb-20 text-center">
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/60 text-zinc-300 text-xs mb-8">
           <Badge variant="secondary" className="bg-zinc-800 text-zinc-300">Live</Badge>
-          <span className="text-zinc-400">Powered by Qwen 3.8 on Groq & x402 v2</span>
+          <span className="text-zinc-400">Embedded Wallets & Autonomous Guardrails on Base</span>
           <ChevronRight className="w-3 h-3 text-zinc-500" />
         </div>
 
@@ -108,7 +143,7 @@ export default function Home() {
         </h1>
 
         <p className="text-sm sm:text-base text-zinc-400 max-w-xl mx-auto mb-10 leading-relaxed">
-          Cryptographically enforced daily allowances, ephemeral session keys, and sub-cent on-chain micro-settlements for AI software on Base.
+          Zero-seed-phrase social logins, deterministic daily allowances, and sub-cent on-chain micro-settlements for AI software on Base.
         </p>
 
         {/* INSTALLATION BAR */}
@@ -123,7 +158,7 @@ export default function Home() {
             </Button>
           </div>
           <Button variant="default" className="w-full sm:w-auto h-10 px-5 text-xs font-semibold" asChild>
-            <a href="#demo">Send Gofer Errand</a>
+            <a href="#demo">Dispatch Errand</a>
           </Button>
         </div>
 
@@ -139,9 +174,9 @@ export default function Home() {
 
           <Card className="bg-zinc-950/60 border-zinc-800/80">
             <CardHeader className="p-4 space-y-1">
-              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Session Security</span>
-              <div className="text-lg font-bold font-mono text-zinc-100">Guarded</div>
-              <span className="text-[11px] text-zinc-500">Zero master key exposure</span>
+              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Embedded Auth</span>
+              <div className="text-lg font-bold font-mono text-zinc-100">Social Login</div>
+              <span className="text-[11px] text-zinc-500">Privy zero-seed-phrase</span>
             </CardHeader>
           </Card>
 
@@ -155,9 +190,9 @@ export default function Home() {
 
           <Card className="bg-zinc-950/60 border-zinc-800/80">
             <CardHeader className="p-4 space-y-1">
-              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Interface</span>
-              <div className="text-lg font-bold font-mono text-zinc-100">Gofer Agent</div>
-              <span className="text-[11px] text-zinc-500">Qwen 3.8 Tool Caller</span>
+              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Persistent State</span>
+              <div className="text-lg font-bold font-mono text-zinc-100">Postgres</div>
+              <span className="text-[11px] text-zinc-500">Supabase memory layer</span>
             </CardHeader>
           </Card>
         </div>
@@ -279,6 +314,12 @@ export default function Home() {
                       <div className="text-[10px] font-mono text-zinc-500 truncate pt-1 border-t border-zinc-800/80">
                         Tx: {report.payment.txHash}
                       </div>
+                    </div>
+                  )}
+
+                  {authenticated && (
+                    <div className="text-[10px] font-mono text-emerald-400/80 flex items-center space-x-1">
+                      <span>✓ Synchronized with Supabase Memory</span>
                     </div>
                   )}
                 </div>
