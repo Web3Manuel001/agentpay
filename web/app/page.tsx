@@ -10,14 +10,18 @@ import {
   Check, 
   ExternalLink, 
   CheckCircle2, 
-  ChevronRight
+  ChevronRight,
+  TrendingUp,
+  Activity
 } from 'lucide-react';
 
 export default function Home() {
   const [copied, setCopied] = useState(false);
   const [tab, setTab] = useState<'client' | 'middleware'>('client');
-  const [allowance, setAllowance] = useState(15);
+  const [allowance, setAllowance] = useState(25);
+  const [directive, setDirective] = useState("Audit Base TVL, check ETH spot price, and pay 2.50 USDC for hosting.");
   const [status, setStatus] = useState<'idle' | 'running' | 'success'>('idle');
+  const [report, setReport] = useState<any>(null);
 
   const copyInstall = () => {
     navigator.clipboard.writeText('npm install @agentpay/sdk viem');
@@ -25,9 +29,22 @@ export default function Home() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSimulate = () => {
+  const handleExecute = async () => {
     setStatus('running');
-    setTimeout(() => setStatus('success'), 1800);
+    setReport(null);
+
+    try {
+      const res = await fetch('/api/gofer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ directive }),
+      });
+      const data = await res.json();
+      setReport(data);
+      setStatus('success');
+    } catch {
+      setStatus('idle');
+    }
   };
 
   return (
@@ -42,9 +59,9 @@ export default function Home() {
               <span>Base L2 Settlement</span>
             </span>
             <span className="text-zinc-700">/</span>
-            <span>Standard: <span className="text-zinc-200">x402 v2</span></span>
+            <span>Intelligence: <span className="text-zinc-200">Qwen 3.8 LPU</span></span>
             <span className="hidden sm:inline text-zinc-700">/</span>
-            <span className="hidden sm:inline">Finality: <span className="text-zinc-200">Sub-second Flashblocks</span></span>
+            <span className="hidden sm:inline">Protocol Standard: <span className="text-zinc-200">x402 v2</span></span>
           </div>
           <span className="text-zinc-500 hidden sm:inline">Non-Custodial Architecture</span>
         </div>
@@ -77,11 +94,11 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 3. HERO: NATIVE SHADCN MONOCHROME */}
+      {/* 3. HERO: SHADCN MONOCHROME */}
       <section className="max-w-4xl mx-auto px-6 pt-24 pb-20 text-center">
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/60 text-zinc-300 text-xs mb-8">
-          <Badge variant="secondary" className="bg-zinc-800 text-zinc-300">New</Badge>
-          <span className="text-zinc-400">Official x402 v2 Settlement Engine</span>
+          <Badge variant="secondary" className="bg-zinc-800 text-zinc-300">Live</Badge>
+          <span className="text-zinc-400">Powered by Qwen 3.8 on Groq & x402 v2</span>
           <ChevronRight className="w-3 h-3 text-zinc-500" />
         </div>
 
@@ -106,7 +123,7 @@ export default function Home() {
             </Button>
           </div>
           <Button variant="default" className="w-full sm:w-auto h-10 px-5 text-xs font-semibold" asChild>
-            <a href="#demo">View Terminal</a>
+            <a href="#demo">Send Gofer Errand</a>
           </Button>
         </div>
 
@@ -122,7 +139,7 @@ export default function Home() {
 
           <Card className="bg-zinc-950/60 border-zinc-800/80">
             <CardHeader className="p-4 space-y-1">
-              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Session Key Auth</span>
+              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Session Security</span>
               <div className="text-lg font-bold font-mono text-zinc-100">Guarded</div>
               <span className="text-[11px] text-zinc-500">Zero master key exposure</span>
             </CardHeader>
@@ -139,35 +156,46 @@ export default function Home() {
           <Card className="bg-zinc-950/60 border-zinc-800/80">
             <CardHeader className="p-4 space-y-1">
               <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Interface</span>
-              <div className="text-lg font-bold font-mono text-zinc-100">Claude MCP</div>
-              <span className="text-[11px] text-zinc-500">Model Context Protocol</span>
+              <div className="text-lg font-bold font-mono text-zinc-100">Gofer Agent</div>
+              <span className="text-[11px] text-zinc-500">Qwen 3.8 Tool Caller</span>
             </CardHeader>
           </Card>
         </div>
       </section>
 
-      {/* 4. INTERACTIVE SIMULATION */}
+      {/* 4. LIVE INTERACTIVE GOFER EXECUTION TERMINAL */}
       <section id="demo" className="max-w-4xl mx-auto px-6 py-16 border-t border-zinc-800/60">
         <div className="mb-8">
-          <Badge variant="outline" className="mb-2">Execution Deck</Badge>
+          <Badge variant="outline" className="mb-2">Gofer Execution Deck</Badge>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">
-            Smart Vault Policy Simulation
+            Autonomous Financial Errand Terminal
           </h2>
           <p className="text-xs text-zinc-400 mt-1">
-            Test on-chain spend allowances and x402 HTTP challenge negotiation.
+            Dispatch an errand: Gofer queries DefiLlama, audits the vault, and executes payments on Base.
           </p>
         </div>
 
         <div className="grid md:grid-cols-12 gap-5">
+          {/* DIRECTIVE & ALLOWANCE CONTROLS */}
           <Card className="md:col-span-5 bg-zinc-950 border-zinc-800">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-mono">AgentVault.sol</CardTitle>
+                <CardTitle className="text-sm font-mono">AgentVault Policy</CardTitle>
                 <Badge variant="success">Active</Badge>
               </div>
-              <CardDescription>Base Sepolia Verified Bytecode</CardDescription>
+              <CardDescription>On-Chain Guardrail Status</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-5">
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-[11px] text-zinc-400 font-mono mb-1.5 block">Mission Directive</label>
+                <textarea 
+                  rows={3}
+                  value={directive}
+                  onChange={(e) => setDirective(e.target.value)}
+                  className="w-full bg-zinc-900/60 border border-zinc-800 rounded-lg p-2.5 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500 transition resize-none font-sans"
+                />
+              </div>
+
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-mono">
                   <span className="text-zinc-400">Daily Allowance</span>
@@ -184,69 +212,75 @@ export default function Home() {
                 />
               </div>
 
-              <div className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800 space-y-2 font-mono text-xs">
-                <div className="flex justify-between text-zinc-400 text-[11px]">
-                  <span>On-Chain Limit:</span>
-                  <span className="text-zinc-200">${allowance}.00</span>
-                </div>
-                <div className="flex justify-between text-zinc-400 text-[11px]">
-                  <span>Spent 24h:</span>
-                  <span className="text-zinc-200">{status === 'success' ? '$1.50' : '$0.00'}</span>
-                </div>
-                <div className="flex justify-between text-zinc-400 text-[11px]">
-                  <span>TTL Expiry:</span>
-                  <span className="text-zinc-200">23h 59m</span>
-                </div>
-              </div>
-
               <Button 
-                onClick={handleSimulate} 
+                onClick={handleExecute} 
                 disabled={status === 'running'} 
                 className="w-full text-xs font-semibold"
               >
-                {status === 'running' ? 'Broadcasting to Base...' : 'Dispatch AlphaScout Query'}
+                {status === 'running' ? 'Gofer Executing Tools...' : 'Send Gofer on Errand ⚡'}
               </Button>
             </CardContent>
           </Card>
 
+          {/* REAL-TIME EXECUTIVE DOSSIER DISPLAY */}
           <Card className="md:col-span-7 bg-zinc-950 border-zinc-800 overflow-hidden font-mono text-xs">
             <div className="px-4 py-2.5 border-b border-zinc-800 bg-zinc-900/40 flex items-center justify-between text-[11px] text-zinc-400">
               <div className="flex items-center space-x-2">
                 <Terminal className="w-3.5 h-3.5 text-zinc-500" />
-                <span>telemetry.log</span>
+                <span>gofer-executive-brief.md</span>
               </div>
-              <span>CAIP-2 eip155:8453</span>
+              <span>Qwen 3.8 · Base L2</span>
             </div>
-            <CardContent className="p-4 space-y-2.5 min-h-[220px]">
-              <div className="text-zinc-600">// Ready. Awaiting autonomous agent execution.</div>
-
-              {status !== 'idle' && (
-                <div className="text-zinc-300">
-                  <span className="text-zinc-500">&gt;</span> Agent query dispatched: &quot;Audit Base whale flows&quot;
+            <CardContent className="p-4 space-y-3 min-h-[260px]">
+              {status === 'idle' && (
+                <div className="text-zinc-600 font-sans text-xs">
+                  // Awaiting mission dispatch. Click &quot;Send Gofer on Errand&quot; to execute live tools.
                 </div>
               )}
 
-              {status !== 'idle' && (
-                <div className="text-zinc-400 text-[11px] bg-zinc-900/60 p-2 rounded border border-zinc-800">
-                  [HTTP 402] Server Challenge: PAYMENT-REQUIRED ($1.50 USDC)
+              {status === 'running' && (
+                <div className="space-y-2 text-zinc-400 animate-pulse text-[11px]">
+                  <div>&gt; Qwen reasoning loop initiated on Groq LPU...</div>
+                  <div>&gt; Dispatching get_institutional_market_data()...</div>
+                  <div>&gt; Dispatching execute_outbound_payment()...</div>
                 </div>
               )}
 
-              {status === 'success' && (
-                <div className="text-zinc-200 text-[11px] bg-zinc-900/60 p-2 rounded border border-zinc-800 space-y-1">
-                  <div className="text-emerald-400 flex items-center space-x-1">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span>Settlement Confirmed on Base</span>
+              {status === 'success' && report && (
+                <div className="space-y-3 font-sans text-xs text-zinc-200">
+                  <div className="flex items-center space-x-1.5 text-emerald-400 font-semibold font-mono text-[11px]">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Mission Successfully Completed & Verified On-Chain</span>
                   </div>
-                  <div className="text-zinc-500 text-[10px] truncate">
-                    Tx: 0x38c5179e8150c8cb24d8c52d747e39118a049334660f26100d1ae6e16fe6ea70
-                  </div>
-                </div>
-              )}
 
-              {status === 'success' && (
-                <div className="text-[11px] text-zinc-300 pt-1 font-sans">
-                  <strong>Result:</strong> $6.7M institutional liquidity deployed to Base Aerodrome pools.
+                  <div className="p-2.5 rounded bg-zinc-900/70 border border-zinc-800 space-y-1 text-[11px]">
+                    <div className="text-zinc-400 font-mono font-semibold uppercase text-[10px]">Market Audit (DefiLlama)</div>
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">ETH Spot Price:</span>
+                      <span className="text-zinc-100 font-mono">${report.market.ethPrice}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">Base Ecosystem TVL:</span>
+                      <span className="text-zinc-100 font-mono">${report.market.baseTvl}</span>
+                    </div>
+                  </div>
+
+                  {report.payment && (
+                    <div className="p-2.5 rounded bg-zinc-900/70 border border-zinc-800 space-y-1 text-[11px]">
+                      <div className="text-zinc-400 font-mono font-semibold uppercase text-[10px]">Settled Payment</div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-400">Amount:</span>
+                        <span className="text-emerald-400 font-mono font-bold">{report.payment.amount}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-400">Memo:</span>
+                        <span className="text-zinc-200">{report.payment.memo}</span>
+                      </div>
+                      <div className="text-[10px] font-mono text-zinc-500 truncate pt-1 border-t border-zinc-800/80">
+                        Tx: {report.payment.txHash}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
