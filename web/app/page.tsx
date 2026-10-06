@@ -1,11 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
 
 export default function PaythosProtocolHub() {
-  const { login, logout, authenticated, user } = usePrivy();
+  let login = () => {}, logout = () => {}, authenticated = false, user: any = null;
+  try {
+    const p = usePrivy();
+    login = p.login;
+    logout = p.logout;
+    authenticated = p.authenticated;
+    user = p.user;
+  } catch {}
+
   const [tab, setTab] = useState<'sdk' | 'middleware'>('sdk');
   const [copied, setCopied] = useState(false);
   const [currentBlock, setCurrentBlock] = useState(19842109);
@@ -61,7 +68,7 @@ export default function PaythosProtocolHub() {
             </div>
 
             <nav className="hidden lg:flex items-center gap-6 font-mono text-xs">
-              <Link href="/" className="text-white border-b-2 border-white pb-1 font-medium">Protocol Hub</Link>
+              <span className="text-white border-b-2 border-white pb-1 font-medium">Protocol Hub</span>
               <a href="#playground" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Code Workspace</a>
               <a href="#architecture" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Architecture</a>
               <a href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" target="_blank" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Basescan</a>
@@ -172,7 +179,7 @@ export default function PaythosProtocolHub() {
           </div>
         </section>
 
-        {/* 3. METRIC STRIP (4 Columns) */}
+        {/* 3. METRIC STRIP */}
         <section className="w-full px-6 sm:px-8 py-8 bg-[#1c1b1d] border-y border-[#444748]/40">
           <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             
@@ -306,7 +313,7 @@ const server = http.createServer((req, res) => {
           </div>
         </section>
 
-        {/* 5. 3-PANEL DETERMINISTIC ARCHITECTURE */}
+        {/* 5. 3-PANEL ARCHITECTURE */}
         <section id="architecture" className="w-full px-6 sm:px-8 py-16 bg-[#1c1b1d] border-t border-[#444748]/40">
           <div className="max-w-5xl mx-auto flex flex-col gap-8">
             <div>

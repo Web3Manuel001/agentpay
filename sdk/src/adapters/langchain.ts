@@ -1,4 +1,4 @@
-import { AgentPay } from '../client.js';
+import { Paythos } from '../client.js';
 import { type Address } from 'viem';
 
 export interface LangChainToolDefinition {
@@ -10,7 +10,7 @@ export interface LangChainToolDefinition {
 /**
  * Creates LangChain-compatible tool definitions for AgentPay
  */
-export function createLangChainTools(sdk: AgentPay, usdcAddress: Address): LangChainToolDefinition[] {
+export function createLangChainTools(sdk: Paythos, usdcAddress: Address): LangChainToolDefinition[] {
   return [
     {
       name: 'agentpay_check_budget',

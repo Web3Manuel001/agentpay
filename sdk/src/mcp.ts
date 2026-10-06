@@ -4,7 +4,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { AgentPay } from './client.js';
+import { Paythos } from './client.js';
 import { type Address, type Hex } from 'viem';
 
 // Universal Environment Fallbacks
@@ -23,11 +23,11 @@ const server = new Server(
 );
 
 // Lazy SDK initializer to support dynamic environment configurations
-function getClient(): AgentPay {
+function getClient(): Paythos {
   if (!AGENT_KEY) {
     throw new Error('Missing AGENTPAY_AGENT_KEY environment variable for MCP session.');
   }
-  return new AgentPay({
+  return new Paythos({
     privateKey: AGENT_KEY,
     vaultAddress: VAULT_ADDRESS,
     rpcUrl: RPC_URL,
@@ -132,7 +132,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   } catch (err: any) {
     return {
       isError: true,
-      content: [{ type: 'text', text: `AgentPay MCP Error: ${err.message || err}` }],
+      content: [{ type: 'text', text: `Paythos MCP Error: ${err.message || err}` }],
     };
   }
 });

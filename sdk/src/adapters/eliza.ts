@@ -1,4 +1,4 @@
-import { AgentPay } from '../client.js';
+import { Paythos } from '../client.js';
 import { type Address } from 'viem';
 
 export interface ElizaAction {
@@ -21,7 +21,7 @@ export interface ElizaPlugin {
 /**
  * Native ElizaOS Plugin for AgentPay Session Vaults & x402
  */
-export function createAgentPayElizaPlugin(sdk: AgentPay, usdcAddress: Address): ElizaPlugin {
+export function createAgentPayElizaPlugin(sdk: Paythos, usdcAddress: Address): ElizaPlugin {
   return {
     name: 'plugin-agentpay',
     description: 'Enforces non-custodial on-chain spend guardrails and handles x402 micropayments on Base.',

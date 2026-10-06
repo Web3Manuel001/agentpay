@@ -11,7 +11,7 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { localhost } from 'viem/chains';
-import AgentVaultABI from './abi/PaythosVault.json' with { type: 'json' };
+import PaythosVaultABI from './abi/PaythosVault.json' with { type: 'json' };
 import type { X402PaymentRequired, X402PaymentSignature, X402PaymentResponse } from './types.js';
 
 export interface SessionStatus {
@@ -60,7 +60,7 @@ export class Paythos {
     const target = agentAddress || this.account.address;
     const policy = (await this.publicClient.readContract({
       address: this.vaultAddress,
-      abi: AgentVaultABI,
+      abi: PaythosVaultABI,
       functionName: 'sessions',
       args: [target],
     })) as [bigint, bigint, bigint, bigint, boolean];
@@ -92,7 +92,7 @@ export class Paythos {
 
     const hash = await this.walletClient.writeContract({
       address: this.vaultAddress,
-      abi: AgentVaultABI,
+      abi: PaythosVaultABI,
       functionName: 'executePayment',
       args: [params.tokenAddress, params.recipient, parsedAmount],
     });
@@ -192,7 +192,7 @@ export class Paythos {
 
     const hash = await this.walletClient.writeContract({
       address: this.vaultAddress,
-      abi: AgentVaultABI,
+      abi: PaythosVaultABI,
       functionName: 'createSession',
       args: [params.agentAddress, limit, BigInt(params.durationSeconds)],
     });
@@ -204,7 +204,7 @@ export class Paythos {
   async revokeSession(agentAddress: Address): Promise<Hash> {
     const hash = await this.walletClient.writeContract({
       address: this.vaultAddress,
-      abi: AgentVaultABI,
+      abi: PaythosVaultABI,
       functionName: 'revokeSession',
       args: [agentAddress],
     });
@@ -214,5 +214,4 @@ export class Paythos {
   }
 }
 
-// Backwards-compatible export
 export { Paythos as AgentPay };
