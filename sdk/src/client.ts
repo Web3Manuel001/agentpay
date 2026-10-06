@@ -11,7 +11,7 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { localhost } from 'viem/chains';
-import AgentVaultABI from './abi/AgentVault.json' with { type: 'json' };
+import AgentVaultABI from './abi/PaythosVault.json' with { type: 'json' };
 import type { X402PaymentRequired, X402PaymentSignature, X402PaymentResponse } from './types.js';
 
 export interface SessionStatus {
