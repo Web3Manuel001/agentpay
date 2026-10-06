@@ -4,175 +4,138 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { z } from 'zod';
-import { AgentPay } from './index.js';
+import { AgentPay } from './client.js';
 import { type Address, type Hex } from 'viem';
 
-// Environment variables passed by Claude Desktop or LLM host
-const VAULT_ADDRESS = (process.env.AGENTPAY_VAULT_ADDRESS || '') as Address;
-const AGENT_KEY = (process.env.AGENTPAY_AGENT_KEY || '') as Hex;
-const RPC_URL = process.env.AGENTPAY_RPC_URL || 'http://127.0.0.1:8545';
+// Universal Environment Fallbacks
+const VAULT_ADDRESS = (process.env.AGENTPAY_VAULT_ADDRESS || process.env.VAULT_ADDRESS || '0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347') as Address;
+const AGENT_KEY = (process.env.AGENTPAY_AGENT_KEY || process.env.AGENT_KEY || '') as Hex;
+const RPC_URL = process.env.AGENTPAY_RPC_URL || process.env.RPC_URL || 'https://sepolia.base.org';
 
-if (!VAULT_ADDRESS || !AGENT_KEY) {
-  console.error('Missing AGENTPAY_VAULT_ADDRESS or AGENTPAY_AGENT_KEY env variables.');
-  process.exit(1);
-}
-
-// Initialize the Agent SDK client
-const agent = new AgentPay({
-  privateKey: AGENT_KEY,
-  vaultAddress: VAULT_ADDRESS,
-  rpcUrl: RPC_URL,
-});
-
-// Create MCP Server instance
 const server = new Server(
   {
-    name: 'agentpay-mcp',
-    version: '0.1.0',
+    name: 'agentpay-universal-mcp',
+    version: '0.2.0',
   },
   {
-    capabilities: {
-      tools: {},
-    },
+    capabilities: { tools: {} },
   }
 );
 
-// 1. ADVERTISE AVAILABLE TOOLS TO CLAUDE
+// Lazy SDK initializer to support dynamic environment configurations
+function getClient(): AgentPay {
+  if (!AGENT_KEY) {
+    throw new Error('Missing AGENTPAY_AGENT_KEY environment variable for MCP session.');
+  }
+  return new AgentPay({
+    privateKey: AGENT_KEY,
+    vaultAddress: VAULT_ADDRESS,
+    rpcUrl: RPC_URL,
+  });
+}
+
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
       {
-        name: 'get_spend_allowance',
-        description: 'Check the remaining daily USDC budget, amount spent today, and session status for this AI agent.',
-        inputSchema: {
-          type: 'object',
-          properties: {},
-        },
+        name: 'agentpay_get_budget',
+        description: 'Check available USDC spending budget and session status in the on-chain AgentVault.',
+        inputSchema: { type: 'object', properties: {} },
       },
       {
-        name: 'fetch_paywalled_api',
-        description: 'Fetch data from an API protected by an HTTP 402 paywall. Automatically pays required USDC from the AgentVault if within budget.',
+        name: 'agentpay_execute_payment',
+        description: 'Execute an on-chain USDC payment to an address on Base within daily allowance limits.',
         inputSchema: {
           type: 'object',
           properties: {
-            url: {
-              type: 'string',
-              description: 'The URL of the API endpoint to query',
-            },
+            tokenAddress: { type: 'string', description: 'ERC-20 token address (defaults to Base USDC)' },
+            recipient: { type: 'string', description: 'Destination 0x address' },
+            amountUsdc: { type: 'string', description: 'Amount in USDC (e.g. "1.50")' },
+          },
+          required: ['recipient', 'amountUsdc'],
+        },
+      },
+      {
+        name: 'agentpay_fetch_x402_api',
+        description: 'Fetch an API protected by an HTTP 402 paywall. Automatically pays required USDC from the vault and unlocks data.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            url: { type: 'string', description: 'URL of the paywalled resource' },
           },
           required: ['url'],
-        },
-      },
-      {
-        name: 'transfer_usdc',
-        description: 'Transfer USDC directly to a recipient address within the daily spending limit.',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            tokenAddress: {
-              type: 'string',
-              description: 'The contract address of the ERC-20 token (e.g. USDC)',
-            },
-            recipient: {
-              type: 'string',
-              description: 'The destination Ethereum/Base address',
-            },
-            amountUsdc: {
-              type: 'string',
-              description: 'Amount of USDC to send (e.g. "1.50")',
-            },
-          },
-          required: ['tokenAddress', 'recipient', 'amountUsdc'],
         },
       },
     ],
   };
 });
 
-// 2. HANDLE TOOL EXECUTION WHEN CLAUDE CALLS THEM
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
+  const client = getClient();
 
   try {
-    if (name === 'get_spend_allowance') {
-      const status = await agent.getSessionStatus();
+    if (name === 'agentpay_get_budget') {
+      const status = await client.getSessionStatus();
       return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({
-              dailyLimitUsdc: status.dailyLimit,
-              spentTodayUsdc: status.spentToday,
-              remainingTodayUsdc: status.remainingToday,
-              isActive: status.isActive,
-            }, null, 2),
-          },
-        ],
+        content: [{
+          type: 'text',
+          text: JSON.stringify({
+            dailyLimitUsdc: status.dailyLimit,
+            remainingTodayUsdc: status.remainingToday,
+            spentTodayUsdc: status.spentToday,
+            isPolicyActive: status.isActive,
+          }, null, 2),
+        }],
       };
     }
 
-    if (name === 'fetch_paywalled_api') {
-      const { url } = args as { url: string };
-      const result = await agent.fetchWithPayment(url);
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({
-              status: 'SUCCESS',
-              costPaidUsdc: result.costPaid,
-              txHash: result.txHash,
-              payload: result.data,
-            }, null, 2),
-          },
-        ],
-      };
-    }
-
-    if (name === 'transfer_usdc') {
-      const { tokenAddress, recipient, amountUsdc } = args as {
-        tokenAddress: Address;
-        recipient: Address;
-        amountUsdc: string;
-      };
-
-      const txHash = await agent.pay({
-        tokenAddress,
-        recipient,
-        amountUsdc,
+    if (name === 'agentpay_execute_payment') {
+      const { recipient, amountUsdc, tokenAddress } = args as any;
+      const txHash = await client.pay({
+        tokenAddress: tokenAddress || '0x036CbD53842c5426634e7929541eC2318f3dCF7e', // Base Sepolia USDC
+        recipient: recipient as Address,
+        amountUsdc: String(amountUsdc),
       });
 
       return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({
-              status: 'PAYMENT_SENT',
-              txHash,
-              amountPaid: amountUsdc,
-              recipient,
-            }, null, 2),
-          },
-        ],
+        content: [{
+          type: 'text',
+          text: JSON.stringify({
+            status: 'SETTLED',
+            txHash,
+            amountPaid: amountUsdc,
+            recipient,
+          }, null, 2),
+        }],
       };
     }
 
-    throw new Error(`Unknown tool: ${name}`);
-  } catch (error: any) {
+    if (name === 'agentpay_fetch_x402_api') {
+      const { url } = args as any;
+      const result = await client.fetchWithPayment(url);
+
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify({
+            status: 'SUCCESS',
+            costPaidUsdc: result.costPaid,
+            txHash: result.txHash,
+            payload: result.data,
+          }, null, 2),
+        }],
+      };
+    }
+
+    throw new Error(`Tool ${name} not recognized.`);
+  } catch (err: any) {
     return {
       isError: true,
-      content: [
-        {
-          type: 'text',
-          text: `AgentPay Execution Failed: ${error.message || error}`,
-        },
-      ],
+      content: [{ type: 'text', text: `AgentPay MCP Error: ${err.message || err}` }],
     };
   }
 });
 
-// Connect over Stdio (standard transport for Claude Desktop)
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error('AgentPay MCP Server running on stdio');
