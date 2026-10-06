@@ -1,24 +1,27 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
+import { 
+  Shield, 
+  Terminal, 
+  Copy, 
+  Check, 
+  ExternalLink, 
+  ArrowRight, 
+  Zap, 
+  KeyRound, 
+  Layers, 
+  Cpu,
+  CheckCircle2,
+  Code2,
+  FileCode2
+} from 'lucide-react';
 
 export default function PaythosProtocolHub() {
-  let login = () => {}, logout = () => {}, authenticated = false, user: any = null;
-  try {
-    const p = usePrivy();
-    login = p.login;
-    logout = p.logout;
-    authenticated = p.authenticated;
-    user = p.user;
-  } catch {}
-
-  const [tab, setTab] = useState<'sdk' | 'middleware'>('sdk');
+  const [tab, setTab] = useState<'client' | 'middleware'>('client');
+  const [pkgManager, setPkgManager] = useState<'npm' | 'pnpm' | 'bun'>('npm');
   const [copied, setCopied] = useState(false);
-  const [currentBlock, setCurrentBlock] = useState(19842109);
-
-  const walletAddress = user?.wallet?.address;
-  const userIdentifier = user?.email?.address || (walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : null);
+  const [currentBlock, setCurrentBlock] = useState(21849204);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,353 +30,356 @@ export default function PaythosProtocolHub() {
     return () => clearInterval(interval);
   }, []);
 
+  const getInstallCmd = () => {
+    if (pkgManager === 'pnpm') return 'pnpm add paythos-sdk viem';
+    if (pkgManager === 'bun') return 'bun add paythos-sdk viem';
+    return 'npm install paythos-sdk viem';
+  };
+
   const copyInstall = () => {
-    navigator.clipboard.writeText('npm install paythos-sdk viem');
+    navigator.clipboard.writeText(getInstallCmd());
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="bg-[#131315] text-[#e5e1e4] font-sans min-h-screen antialiased selection:bg-zinc-800 selection:text-white">
+    <div className="bg-[#0A0A0C] text-[#F3F4F6] font-sans min-h-screen antialiased selection:bg-blue-600/30 selection:text-blue-200">
       
-      {/* 1. FIXED HEADER */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#131315] border-b border-[#444748]/60">
-        
-        {/* Ticker Bar */}
-        <div className="h-7 bg-[#0e0e10] border-b border-[#444748]/60 px-6 sm:px-8 flex items-center justify-between font-mono text-[11px]">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-[#6ffbbe] inline-block animate-pulse"></span>
-              <span className="text-white font-medium">Base L2 Settlement: Active</span>
-            </div>
-            <span className="text-[#444748]">|</span>
-            <span className="text-[#c4c7c8]">x402 Protocol v2.1</span>
-            <span className="text-[#444748]">|</span>
-            <span className="text-[#c4c7c8]">Latency: <span className="text-white font-medium">194ms</span></span>
+      {/* 1. REAL-TIME PROTOCOL STATUS TICKER */}
+      <div className="border-b border-white/[0.06] bg-[#070709] px-6 py-2">
+        <div className="max-w-6xl mx-auto flex items-center justify-between text-[11px] font-mono text-zinc-400">
+          <div className="flex items-center space-x-3">
+            <span className="flex items-center space-x-1.5 text-emerald-400 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Base L2 Settlement: Operational</span>
+            </span>
+            <span className="text-zinc-700 hidden sm:inline">|</span>
+            <span className="hidden sm:inline text-zinc-300">Spec: <span className="text-blue-400">x402 v2.1</span></span>
+            <span className="text-zinc-700 hidden sm:inline">|</span>
+            <span className="hidden sm:inline">Latency: <span className="text-zinc-200 font-semibold">184ms Flashblocks</span></span>
           </div>
-          <div className="hidden sm:flex items-center gap-3 text-[#c4c7c8]">
-            <span>BLOCK: #{currentBlock.toLocaleString()}</span>
-            <span className="text-[#444748]">/</span>
-            <span className="text-[#4edea3]">GAS: 0.001 GWEI</span>
+          <div className="flex items-center space-x-3 text-zinc-400">
+            <span>BLOCK #{currentBlock.toLocaleString()}</span>
+            <span className="text-zinc-700">·</span>
+            <span className="text-emerald-400">0.0018 GWEI</span>
           </div>
         </div>
+      </div>
 
-        {/* Main Navbar */}
-        <div className="h-16 px-6 sm:px-8 flex items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2.5">
-              <img src="/logo.svg" alt="Paythos" className="h-8 w-8 object-contain" />
-              <span className="text-xl font-semibold text-white tracking-tight">Paythos</span>
-              <span className="font-mono text-[11px] px-1.5 py-0.5 bg-[#2a2a2c] border border-[#444748] text-[#c4c7c8] rounded">v0.1.0</span>
+      {/* 2. INSTITUTIONAL NAVBAR */}
+      <header className="border-b border-white/[0.06] sticky top-0 z-50 bg-[#0A0A0C]/90 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center font-mono font-bold text-xs text-white shadow-lg shadow-blue-500/20">
+                P
+              </div>
+              <span className="font-bold text-base tracking-tight text-white">Paythos</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                v0.1.0-alpha
+              </span>
             </div>
 
-            <nav className="hidden lg:flex items-center gap-6 font-mono text-xs">
-              <span className="text-white border-b-2 border-white pb-1 font-medium">Protocol Hub</span>
-              <a href="#playground" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Code Workspace</a>
-              <a href="#architecture" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Architecture</a>
-              <a href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" target="_blank" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Basescan</a>
+            <nav className="hidden md:flex items-center space-x-6 text-xs font-mono text-zinc-400">
+              <a href="#quickstart" className="hover:text-white transition">Quickstart</a>
+              <a href="#architecture" className="hover:text-white transition">Architecture</a>
+              <a href="#playground" className="hover:text-white transition">Integration</a>
+              <a 
+                href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" 
+                target="_blank" 
+                className="hover:text-white transition flex items-center space-x-1"
+              >
+                <span>Basescan</span>
+                <ExternalLink className="w-3 h-3 text-zinc-500" />
+              </a>
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center space-x-3">
             <a 
               href="https://github.com/Web3Manuel001/paythos" 
-              target="_blank" 
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-[#444748] text-[#c4c7c8] hover:text-white hover:border-[#8e9192] font-mono text-xs rounded transition-all"
+              target="_blank"
+              className="px-3.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-200 text-xs font-mono transition flex items-center space-x-1.5"
             >
               <span>GitHub</span>
+              <ExternalLink className="w-3 h-3 text-zinc-400" />
             </a>
-
-            {authenticated ? (
-              <button onClick={logout} className="px-3.5 py-1.5 bg-[#201f22] border border-[#444748] text-white font-mono text-xs rounded hover:bg-[#2a2a2c] transition flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4edea3]"></span>
-                <span>{userIdentifier}</span>
-              </button>
-            ) : (
-              <button onClick={login} className="px-4 py-1.5 bg-white text-[#131315] font-mono text-xs font-semibold rounded hover:bg-[#e2e2e2] transition-colors">
-                Connect Wallet
-              </button>
-            )}
+            
+            <a 
+              href="#playground"
+              className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition shadow-lg shadow-blue-500/25 flex items-center space-x-1.5"
+            >
+              <span>View Code</span>
+              <ArrowRight className="w-3 h-3" />
+            </a>
           </div>
         </div>
       </header>
 
-      {/* 2. HERO SECTION */}
-      <main className="w-full pt-[92px]">
-        
-        {/* Micro Status Bar */}
-        <section className="w-full bg-[#0e0e10] py-2 px-6 sm:px-8 border-b border-[#444748]/40">
-          <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-4 font-mono text-[11px]">
-            <div className="flex items-center gap-4 overflow-x-auto">
-              <span className="text-white bg-[#201f22] px-2 py-0.5 rounded flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-[#6ffbbe] rounded-full animate-pulse"></span>
-                Base L2 Settlement: Operational
-              </span>
-              <span className="text-[#444748]">/</span>
-              <span>200ms Flashblocks Latency</span>
-              <span className="text-[#444748]">/</span>
-              <span>x402 v2 Protocol Spec Standardized</span>
+      {/* 3. HERO SECTION */}
+      <section className="max-w-5xl mx-auto px-6 pt-24 pb-20 text-center relative">
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-96 h-48 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
+
+        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+          <span>RFC-9402 Compliance Engine · Base L2</span>
+        </div>
+
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.08] mb-6">
+          The Monetary Ethos for <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">
+            Autonomous AI Agents
+          </span>
+        </h1>
+
+        <p className="text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+          Non-custodial session policies, mathematical spend guardrails, and sub-cent 
+          <code className="mx-1.5 px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800/40 text-blue-300 font-mono text-sm">x402 v2</code> 
+          settlements for autonomous agent swarms on Base.
+        </p>
+
+        {/* REFINED INSTALLATION COMMAND BAR */}
+        <div id="quickstart" className="max-w-xl mx-auto mb-16 rounded-2xl bg-[#0F0F12] border border-white/[0.08] shadow-2xl p-2">
+          <div className="flex items-center justify-between px-3 pt-1 pb-2 border-b border-white/[0.04]">
+            <div className="flex space-x-1 font-mono text-xs">
+              {(['npm', 'pnpm', 'bun'] as const).map((mgr) => (
+                <button
+                  key={mgr}
+                  onClick={() => setPkgManager(mgr)}
+                  className={`px-2.5 py-1 rounded-md transition ${pkgManager === mgr ? 'bg-blue-600 text-white font-semibold shadow' : 'text-zinc-500 hover:text-zinc-300'}`}
+                >
+                  {mgr}
+                </button>
+              ))}
             </div>
-            <div className="text-[#c4c7c8]">
-              Live Contract: <a href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" target="_blank" className="text-white underline">0xf57c...8347</a>
-            </div>
+            <span className="text-[10px] font-mono text-zinc-500">Node 20+ · ESM Native</span>
           </div>
-        </section>
 
-        {/* Hero Title & Command Bar */}
-        <section className="w-full px-6 sm:px-8 py-16 bg-[#131315]">
-          <div className="max-w-5xl mx-auto flex flex-col items-start gap-6">
-            <div className="flex items-center gap-2 font-mono text-[11px]">
-              <span className="px-2 py-0.5 bg-[#2a2a2c] text-white uppercase tracking-wider rounded">
-                Autonomous Financial Infrastructure
-              </span>
-              <span className="text-[#8e9192]">RFC-9402 Compliance Engine</span>
+          <div className="flex items-center justify-between px-4 py-3 font-mono text-xs sm:text-sm">
+            <div className="flex items-center space-x-2.5 text-zinc-200 truncate">
+              <span className="text-blue-400 select-none font-bold">$</span>
+              <span className="tracking-tight">{getInstallCmd()}</span>
             </div>
+            <button
+              onClick={copyInstall}
+              className="ml-3 px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 transition flex items-center space-x-1.5 shrink-0 border border-white/[0.06]"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-emerald-400 text-xs font-semibold">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5 text-zinc-400" />
+                  <span className="text-xs">Copy</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
 
-            <div className="flex flex-col gap-3 max-w-4xl">
-              <h1 className="text-4xl sm:text-6xl font-bold text-white tracking-tight leading-[1.08]">
-                The Monetary Ethos for Autonomous AI Agents
-              </h1>
-              <p className="text-base sm:text-lg text-[#c4c7c8] max-w-3xl leading-relaxed font-normal">
-                Paythos is non-custodial session vault and x402 payment infrastructure built natively for LLMs, agent runtimes, and autonomous swarms on Base L2. Stream sub-cent micropayments, enforce mathematical spend guardrails, and settle compute API calls deterministically.
+        {/* 4 REFINED METRIC CARDS WITH PURPOSEFUL COLOR ACCENTS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-left max-w-5xl mx-auto">
+          <div className="p-4 rounded-xl bg-[#0F0F12] border border-white/[0.06] relative overflow-hidden">
+            <div className="w-1 h-full bg-emerald-500 absolute top-0 left-0" />
+            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">Settlement Cost</span>
+            <div className="text-2xl font-bold font-mono text-white mt-1">&lt; $0.002</div>
+            <span className="text-xs text-emerald-400/90 font-medium">99% cheaper than Stripe</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#0F0F12] border border-white/[0.06] relative overflow-hidden">
+            <div className="w-1 h-full bg-blue-500 absolute top-0 left-0" />
+            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">Session Security</span>
+            <div className="text-2xl font-bold font-mono text-white mt-1">Guarded</div>
+            <span className="text-xs text-blue-400/90 font-medium">Zero master key exposure</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#0F0F12] border border-white/[0.06] relative overflow-hidden">
+            <div className="w-1 h-full bg-amber-500 absolute top-0 left-0" />
+            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">Protocol Spec</span>
+            <div className="text-2xl font-bold font-mono text-white mt-1">x402 v2</div>
+            <span className="text-xs text-amber-400/90 font-medium">Linux Foundation standard</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#0F0F12] border border-white/[0.06] relative overflow-hidden">
+            <div className="w-1 h-full bg-purple-500 absolute top-0 left-0" />
+            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">Network Finality</span>
+            <div className="text-2xl font-bold font-mono text-white mt-1">200ms</div>
+            <span className="text-xs text-purple-400/90 font-medium">Base L2 Flashblocks</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. VIBRANT SYNTAX-HIGHLIGHTED CODE WORKSPACE */}
+      <section id="playground" className="max-w-5xl mx-auto px-6 py-20 border-t border-white/[0.06]">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <div className="flex items-center space-x-2">
+              <Code2 className="w-4 h-4 text-blue-400" />
+              <span className="text-xs font-mono text-blue-400 uppercase tracking-wider">Developer Surface</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-1">
+              Production Integration in 12 Lines
+            </h2>
+          </div>
+
+          {/* CODE TAB SWITCHER */}
+          <div className="flex p-1 rounded-xl bg-[#141418] border border-white/[0.08] self-start font-mono text-xs">
+            <button
+              onClick={() => setTab('client')}
+              className={`px-3.5 py-1.5 rounded-lg transition ${tab === 'client' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-zinc-400 hover:text-white'}`}
+            >
+              Agent Client SDK
+            </button>
+            <button
+              onClick={() => setTab('middleware')}
+              className={`px-3.5 py-1.5 rounded-lg transition ${tab === 'middleware' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-zinc-400 hover:text-white'}`}
+            >
+              x402 Server Middleware
+            </button>
+          </div>
+        </div>
+
+        {/* TOKYO NIGHT / HIGH-CONTRAST COLORFUL CODE WINDOW */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#0E0E12] overflow-hidden shadow-2xl">
+          <div className="px-5 py-3 border-b border-white/[0.06] bg-[#09090D] flex items-center justify-between text-xs font-mono">
+            <div className="flex items-center space-x-2">
+              <div className="flex space-x-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+              </div>
+              <span className="text-zinc-400 ml-2">
+                {tab === 'client' ? 'agent-client.ts' : 'x402-server.ts'}
+              </span>
+            </div>
+            <span className="text-blue-400 text-[11px] font-semibold">TypeScript 5.8 · Base Sepolia</span>
+          </div>
+
+          {/* VIBRANT SYNTAX CODE BLOCK */}
+          <div className="p-6 font-mono text-xs sm:text-sm leading-relaxed overflow-x-auto text-[#ABB2BF] bg-[#0A0A0E]">
+            {tab === 'client' ? (
+              <pre><code>
+<span className="text-[#C678DD]">import</span> &#123; <span className="text-[#E5C07B]">Paythos</span> &#125; <span className="text-[#C678DD]">from</span> <span className="text-[#98C379]">&quot;paythos-sdk&quot;</span>;<br /><br />
+<span className="text-[#5C6370] italic">// 1. Initialize agent with ephemeral restricted session key</span><br />
+<span className="text-[#C678DD]">const</span> <span className="text-[#E06C75]">agent</span> = <span className="text-[#C678DD]">new</span> <span className="text-[#E5C07B]">Paythos</span>(&#123;<br />
+  &nbsp;&nbsp;<span className="text-[#E06C75]">privateKey</span>: <span className="text-[#E06C75]">process</span>.<span className="text-[#E06C75]">env</span>.<span className="text-[#D19A66]">AGENT_SESSION_KEY</span>,<br />
+  &nbsp;&nbsp;<span className="text-[#E06C75]">vaultAddress</span>: <span className="text-[#98C379]">&quot;0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347&quot;</span>, <span className="text-[#5C6370] italic">// Base Sepolia Verified</span><br />
+  &nbsp;&nbsp;<span className="text-[#E06C75]">rpcUrl</span>: <span className="text-[#98C379]">&quot;https://sepolia.base.org&quot;</span><br />
+&#125;);<br /><br />
+<span className="text-[#5C6370] italic">// 2. Autonomous HTTP 402 negotiation</span><br />
+<span className="text-[#5C6370] italic">// Catches PAYMENT-REQUIRED, signs on Base, attaches receipt & unlocks data</span><br />
+<span className="text-[#C678DD]">const</span> &#123; <span className="text-[#E06C75]">data</span>, <span className="text-[#E06C75]">costPaid</span>, <span className="text-[#E06C75]">txHash</span> &#125; = <span className="text-[#C678DD]">await</span> <span className="text-[#E06C75]">agent</span>.<span className="text-[#61AFEF]">fetchWithPayment</span>(<br />
+  &nbsp;&nbsp;<span className="text-[#98C379]">&quot;https://api.marketdata.xyz/v1/alpha&quot;</span><br />
+);<br /><br />
+<span className="text-[#E5C07B]">console</span>.<span className="text-[#61AFEF]">log</span>(<span className="text-[#98C379]">`Unlocked:`</span>, <span className="text-[#E06C75]">data</span>, <span className="text-[#98C379]">`Settled on Base:`</span>, <span className="text-[#E06C75]">txHash</span>);
+              </code></pre>
+            ) : (
+              <pre><code>
+<span className="text-[#C678DD]">import</span> &#123; <span className="text-[#61AFEF]">createX402Paywall</span> &#125; <span className="text-[#C678DD]">from</span> <span className="text-[#98C379]">&quot;paythos-sdk/middleware&quot;</span>;<br />
+<span className="text-[#C678DD]">import</span> <span className="text-[#E5C07B]">http</span> <span className="text-[#C678DD]">from</span> <span className="text-[#98C379]">&quot;http&quot;</span>;<br /><br />
+<span className="text-[#5C6370] italic">// Gating REST endpoints with HTTP 402 on Base Layer 2</span><br />
+<span className="text-[#C678DD]">const</span> <span className="text-[#E06C75]">paywall</span> = <span className="text-[#61AFEF]">createX402Paywall</span>(&#123;<br />
+  &nbsp;&nbsp;<span className="text-[#E06C75]">costUsdc</span>: <span className="text-[#98C379]">&quot;0.05&quot;</span>,<br />
+  &nbsp;&nbsp;<span className="text-[#E06C75]">recipient</span>: <span className="text-[#98C379]">&quot;0xB7800423D65aB8aa92E5BD3791aa1733ca44673a&quot;</span>, <span className="text-[#5C6370] italic">// Master Treasury</span><br />
+  &nbsp;&nbsp;<span className="text-[#E06C75]">tokenAddress</span>: <span className="text-[#98C379]">&quot;0x036CbD53842c5426634e7929541eC2318f3dCF7e&quot;</span>, <span className="text-[#5C6370] italic">// Base Sepolia USDC</span><br />
+  &nbsp;&nbsp;<span className="text-[#E06C75]">networkId</span>: <span className="text-[#98C379]">&quot;eip155:84532&quot;</span><br />
+&#125;);<br /><br />
+<span className="text-[#C678DD]">const</span> <span className="text-[#E06C75]">server</span> = <span className="text-[#E5C07B]">http</span>.<span className="text-[#61AFEF]">createServer</span>((<span className="text-[#E06C75]">req</span>, <span className="text-[#E06C75]">res</span>) =&gt; &#123;<br />
+  &nbsp;&nbsp;<span className="text-[#61AFEF]">paywall</span>(<span className="text-[#E06C75]">req</span>, <span className="text-[#E06C75]">res</span>, () =&gt; &#123;<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-[#E06C75]">res</span>.<span className="text-[#61AFEF]">end</span>(<span className="text-[#E5C07B]">JSON</span>.<span className="text-[#61AFEF]">stringify</span>(&#123; <span className="text-[#E06C75]">status</span>: <span className="text-[#98C379]">&quot;SUCCESS&quot;</span>, <span className="text-[#E06C75]">data</span>: <span className="text-[#98C379]">&quot;Unlocked payload.&quot;</span> &#125;));<br />
+  &nbsp;&nbsp;&#125;);<br />
+&#125;);<br /><br />
+<span className="text-[#E06C75]">server</span>.<span className="text-[#61AFEF]">listen</span>(<span className="text-[#D19A66]">4000</span>);
+              </code></pre>
+            )}
+          </div>
+
+          <div className="bg-[#09090D] px-5 py-2.5 border-t border-white/[0.06] flex items-center justify-between font-mono text-[11px] text-zinc-400">
+            <div className="flex items-center space-x-3">
+              <span className="text-emerald-400 font-semibold flex items-center space-x-1">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>EIP-712 Signed</span>
+              </span>
+              <span className="text-zinc-700">|</span>
+              <span className="text-blue-400">Paymaster Gas Sponsored</span>
+            </div>
+            <div>Contract: 0xf57c...8347</div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. THE 3 ARCHITECTURE PILLARS */}
+      <section id="architecture" className="max-w-5xl mx-auto px-6 py-20 border-t border-white/[0.06]">
+        <div className="mb-12">
+          <span className="text-xs font-mono text-blue-400 uppercase tracking-wider">Deterministic Systems</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-1">
+            Built for Machine-to-Machine Autonomy
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-6 rounded-2xl bg-[#0F0F12] border border-white/[0.06] flex flex-col justify-between gap-6 hover:border-white/[0.12] transition">
+            <div className="space-y-3">
+              <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                <KeyRound className="w-4 h-4" />
+              </div>
+              <h3 className="font-bold text-white text-base">Autonomous Session Policies</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed font-normal">
+                Generate ephemeral keypairs with mathematical daily caps. Bound agents by rolling 24h drawdowns and automated expiries with zero master key exposure.
               </p>
             </div>
-
-            {/* 1-Click Copyable Command Bar */}
-            <div className="w-full max-w-3xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 bg-[#0e0e10] p-2.5 rounded border border-[#444748]/60 shadow-xl">
-              <div className="flex items-center gap-3 px-2 overflow-x-auto">
-                <span className="text-[#8e9192] select-none font-mono text-sm">$</span>
-                <code className="font-mono text-sm text-white font-medium tracking-tight whitespace-nowrap">
-                  npm install paythos-sdk viem
-                </code>
-                <span className="bg-[#201f22] px-1.5 py-0.5 font-mono text-[10px] text-[#c4c7c8] rounded shrink-0">v0.1.0</span>
-              </div>
-              <div className="flex items-center gap-2 justify-end shrink-0">
-                <button 
-                  onClick={copyInstall}
-                  className="bg-[#2a2a2c] hover:bg-[#353437] text-white font-mono text-xs px-3.5 py-1.5 rounded transition-all active:scale-95 uppercase tracking-wider font-medium"
-                >
-                  {copied ? 'Copied!' : 'Copy'}
-                </button>
-              </div>
-            </div>
-
-            {/* Action CTAs */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <a 
-                href="#playground" 
-                className="px-5 py-2.5 bg-white text-[#131315] font-mono text-xs font-semibold rounded hover:bg-[#e2e2e2] transition-all flex items-center gap-2 shadow-lg shadow-white/5"
-              >
-                <span>View Integration Code</span>
-                <span>➔</span>
-              </a>
-              <a 
-                href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" 
-                target="_blank"
-                className="px-5 py-2.5 bg-[#201f22] hover:bg-[#2a2a2c] border border-[#444748] text-white font-mono text-xs rounded transition-all flex items-center gap-2"
-              >
-                <span className="w-1.5 h-1.5 bg-[#4edea3] rounded-full"></span>
-                <span>Verified Base Sepolia Contract</span>
-              </a>
+            <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.04] font-mono text-[11px] text-emerald-400">
+              <code>PaythosVault.sessions(agentKey)</code>
             </div>
           </div>
-        </section>
 
-        {/* 3. METRIC STRIP */}
-        <section className="w-full px-6 sm:px-8 py-8 bg-[#1c1b1d] border-y border-[#444748]/40">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            <div className="bg-[#201f22] p-4 rounded flex flex-col justify-between gap-3 border border-[#444748]/40">
-              <span className="font-mono text-[10px] text-[#c4c7c8] uppercase tracking-wider">Settlement Cost</span>
-              <div>
-                <div className="text-2xl font-bold font-mono text-white tracking-tight">&lt; $0.002</div>
-                <p className="text-xs text-[#c4c7c8] mt-0.5">Base L2 EIP-4844 blobs</p>
+          <div className="p-6 rounded-2xl bg-[#0F0F12] border border-white/[0.06] flex flex-col justify-between gap-6 hover:border-white/[0.12] transition">
+            <div className="space-y-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                <Layers className="w-4 h-4" />
               </div>
-              <div className="h-1 w-full bg-[#0e0e10] rounded overflow-hidden">
-                <div className="h-full bg-white w-[14%]"></div>
-              </div>
+              <h3 className="font-bold text-white text-base">HTTP 402 Native Handshake</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed font-normal">
+                When an API returns 402 Payment Required, the client agent intercepts the header challenge, crafts an on-chain settlement, and unlocks the resource in &lt;200ms.
+              </p>
             </div>
-
-            <div className="bg-[#201f22] p-4 rounded flex flex-col justify-between gap-3 border border-[#444748]/40">
-              <span className="font-mono text-[10px] text-[#c4c7c8] uppercase tracking-wider">Session Security</span>
-              <div>
-                <div className="text-2xl font-bold font-mono text-white tracking-tight">Guarded</div>
-                <p className="text-xs text-[#c4c7c8] mt-0.5">Programmatic ERC-4337 keys</p>
-              </div>
-              <div className="text-[11px] font-mono text-[#4edea3] flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-[#4edea3] rounded-full"></span>
-                <span>Zero Seed Phrase Exposure</span>
-              </div>
-            </div>
-
-            <div className="bg-[#201f22] p-4 rounded flex flex-col justify-between gap-3 border border-[#444748]/40">
-              <span className="font-mono text-[10px] text-[#c4c7c8] uppercase tracking-wider">Protocol Spec</span>
-              <div>
-                <div className="text-2xl font-bold font-mono text-white tracking-tight">HTTP 402 v2</div>
-                <p className="text-xs text-[#c4c7c8] mt-0.5">Linux Foundation / Base Standard</p>
-              </div>
-              <div className="text-[11px] font-mono text-[#c4c7c8]">
-                <span>Deterministic Token Auth</span>
-              </div>
-            </div>
-
-            <div className="bg-[#201f22] p-4 rounded flex flex-col justify-between gap-3 border border-[#444748]/40">
-              <span className="font-mono text-[10px] text-[#c4c7c8] uppercase tracking-wider">Throughput Latency</span>
-              <div>
-                <div className="text-2xl font-bold font-mono text-white tracking-tight">200ms</div>
-                <p className="text-xs text-[#c4c7c8] mt-0.5">Flashblocks sub-second finality</p>
-              </div>
-              <div className="text-[11px] font-mono text-[#4edea3] flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-[#4edea3] rounded-full"></span>
-                <span>Sync Pre-confirmations</span>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* 4. CODE PLAYGROUND */}
-        <section id="playground" className="w-full px-6 sm:px-8 py-16 bg-[#131315]">
-          <div className="max-w-5xl mx-auto flex flex-col gap-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
-              <div>
-                <span className="font-mono text-xs text-[#8e9192] uppercase tracking-wider">Integration Playground</span>
-                <h2 className="text-2xl font-bold text-white mt-1">Execute Micro-Settlement in 12 Lines</h2>
-              </div>
-              <div className="font-mono text-xs text-[#c4c7c8] flex items-center gap-2">
-                <span>Runtime: Node 20+ / Bun / Deno</span>
-                <span className="text-[#444748]">·</span>
-                <span className="text-white">Base L2 (Sepolia)</span>
-              </div>
-            </div>
-
-            <div className="w-full bg-[#0e0e10] rounded border border-[#444748]/60 overflow-hidden shadow-2xl">
-              <div className="flex flex-wrap items-center justify-between bg-[#201f22] px-4 py-2 border-b border-[#444748]/60">
-                <div className="flex items-center gap-2 font-mono text-xs">
-                  <button 
-                    onClick={() => setTab('sdk')}
-                    className={`px-3 py-1 rounded transition-colors ${tab === 'sdk' ? 'bg-[#353437] text-white font-medium' : 'text-[#c4c7c8] hover:text-white'}`}
-                  >
-                    [Agent Client SDK]
-                  </button>
-                  <button 
-                    onClick={() => setTab('middleware')}
-                    className={`px-3 py-1 rounded transition-colors ${tab === 'middleware' ? 'bg-[#353437] text-white font-medium' : 'text-[#c4c7c8] hover:text-white'}`}
-                  >
-                    [x402 Server Middleware]
-                  </button>
-                </div>
-                <span className="font-mono text-[11px] text-[#c4c7c8] bg-[#2a2a2c] px-2 py-0.5 rounded">TypeScript 5.8</span>
-              </div>
-
-              <div className="p-6 font-mono text-xs leading-relaxed overflow-x-auto text-zinc-300">
-                <pre><code>{tab === 'sdk' ? (
-`import { Paythos } from "paythos-sdk";
-
-const agent = new Paythos({
-  privateKey: process.env.AGENT_SESSION_KEY,
-  vaultAddress: "0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347", // Live Base Sepolia
-  rpcUrl: "https://sepolia.base.org"
-});
-
-// Autonomous HTTP 402 negotiation
-const { data, costPaid, txHash } = await agent.fetchWithPayment(
-  "https://api.compute-swarm.xyz/v1/inference"
-);
-
-console.log("Unlocked data:", data, "Settled on Base:", txHash);`
-                ) : (
-`import { createX402Paywall } from "paythos-sdk/middleware";
-import http from "http";
-
-const paywall = createX402Paywall({
-  costUsdc: "0.05",
-  recipient: "0xB7800423D65aB8aa92E5BD3791aa1733ca44673a", // Master Treasury
-  tokenAddress: "0x036CbD53842c5426634e7929541eC2318f3dCF7e", // Base Sepolia USDC
-  networkId: "eip155:84532"
-});
-
-const server = http.createServer((req, res) => {
-  paywall(req, res, () => {
-    res.end(JSON.stringify({ status: "SUCCESS", data: "Unlocked payload." }));
-  });
-});`
-                )}</code></pre>
-              </div>
-
-              <div className="bg-[#2a2a2c] px-4 py-2 border-t border-[#444748]/60 flex items-center justify-between font-mono text-[11px] text-[#c4c7c8]">
-                <div className="flex items-center gap-3">
-                  <span className="text-[#4edea3]">✓ EIP-712 Signed</span>
-                  <span className="text-[#444748]">|</span>
-                  <span>Paymaster Sponsored Gas</span>
-                </div>
-                <div>Contract: 0xf57c...8347</div>
-              </div>
+            <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.04] font-mono text-[11px] text-amber-400">
+              <code>PAYMENT-REQUIRED ➔ SIGNATURE</code>
             </div>
           </div>
-        </section>
 
-        {/* 5. 3-PANEL ARCHITECTURE */}
-        <section id="architecture" className="w-full px-6 sm:px-8 py-16 bg-[#1c1b1d] border-t border-[#444748]/40">
-          <div className="max-w-5xl mx-auto flex flex-col gap-8">
-            <div>
-              <span className="font-mono text-xs text-[#8e9192] uppercase tracking-wider">Deterministic Architecture</span>
-              <h2 className="text-2xl font-bold text-white mt-1">Purpose-Built for Machine Autonomy</h2>
+          <div className="p-6 rounded-2xl bg-[#0F0F12] border border-white/[0.06] flex flex-col justify-between gap-6 hover:border-white/[0.12] transition">
+            <div className="space-y-3">
+              <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                <Zap className="w-4 h-4" />
+              </div>
+              <h3 className="font-bold text-white text-base">Flashblocks Clearance</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed font-normal">
+                Native synchronization to Base L2 Flashblocks gives immediate 200ms pre-confirmations, preventing unbacked compute leaks before inference finishes.
+              </p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              <div className="bg-[#201f22] p-6 rounded border border-[#444748]/40 flex flex-col justify-between gap-4">
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-white text-base">Autonomous Session Policies</h3>
-                  <p className="text-xs text-[#c4c7c8] leading-relaxed">
-                    Generate scoped ephemeral keypairs with mathematical daily caps. Bound agents by hourly drawdowns and expiration timestamps with zero seed-phrase exposure.
-                  </p>
-                </div>
-                <div className="bg-[#0e0e10] p-2.5 rounded font-mono text-[11px] text-[#4edea3]">
-                  <code>PaythosVault.sessions(agentKey)</code>
-                </div>
-              </div>
-
-              <div className="bg-[#201f22] p-6 rounded border border-[#444748]/40 flex flex-col justify-between gap-4">
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-white text-base">HTTP 402 Native Handshake</h3>
-                  <p className="text-xs text-[#c4c7c8] leading-relaxed">
-                    When an API returns 402 Payment Required, the client agent intercepts the header challenge, crafts an on-chain settlement, and retries in milliseconds.
-                  </p>
-                </div>
-                <div className="bg-[#0e0e10] p-2.5 rounded font-mono text-[11px] text-white">
-                  <code>PAYMENT-REQUIRED ➔ SIGNATURE</code>
-                </div>
-              </div>
-
-              <div className="bg-[#201f22] p-6 rounded border border-[#444748]/40 flex flex-col justify-between gap-4">
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-white text-base">Flashblocks Clearance</h3>
-                  <p className="text-xs text-[#c4c7c8] leading-relaxed">
-                    Native synchronization to Base L2 Flashblocks gives immediate 200ms pre-confirmations, preventing unbacked compute leaks.
-                  </p>
-                </div>
-                <div className="bg-[#0e0e10] p-2.5 rounded font-mono text-[11px] text-[#4edea3]">
-                  <code>194ms average finality</code>
-                </div>
-              </div>
-
+            <div className="p-2.5 rounded-lg bg-black/50 border border-white/[0.04] font-mono text-[11px] text-purple-400">
+              <code>184ms average finality</code>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-      </main>
-
-      {/* FOOTER */}
-      <footer className="w-full bg-[#0e0e10] border-t border-[#444748]/60 py-8 px-6 sm:px-8 font-mono text-xs text-[#c4c7c8]">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-[#4edea3]"></span>
-            <span className="text-white font-medium">Paythos Foundation</span>
+      {/* 6. MINIMALIST FOOTER */}
+      <footer className="border-t border-white/[0.06] bg-[#070709] py-12 px-6 font-mono text-xs text-zinc-500">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-2.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <span className="font-bold text-white">Paythos Foundation</span>
             <span>· MIT / Apache 2.0 Dual License</span>
           </div>
-          <div>Base Sepolia Contract: 0xf57c...8347</div>
+          <div className="flex items-center space-x-4">
+            <a href="https://github.com/Web3Manuel001/paythos" target="_blank" className="hover:text-white transition">GitHub</a>
+            <a href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" target="_blank" className="hover:text-white transition">Base Sepolia</a>
+            <a href="https://x402.org" target="_blank" className="hover:text-white transition">x402 Spec</a>
+          </div>
         </div>
       </footer>
 
