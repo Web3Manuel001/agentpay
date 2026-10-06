@@ -1,13 +1,20 @@
-# Node
+# Node & Next.js
 node_modules/
+.next/
 dist/
 *.log
+npm-debug.log*
 
-# Foundry & Solidity
+# Foundry & Smart Contracts
 contracts/out/
 contracts/cache/
-broadcast/
+contracts/broadcast/
 
-# Environment & Keys
+# Environment Variables & Secrets (CRITICAL)
 .env
+.env.local
+.env.*.local
+*.pem
+
+# System
 .DS_Store
