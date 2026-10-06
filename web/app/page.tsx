@@ -4,9 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
 
-export default function ProtocolHub() {
-  let login = () => {}, logout = () => {}, authenticated = false, user: any = null;
-try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = p.authenticated; user = p.user; } catch {}
+export default function PaythosProtocolHub() {
+  const { login, logout, authenticated, user } = usePrivy();
   const [tab, setTab] = useState<'sdk' | 'middleware'>('sdk');
   const [copied, setCopied] = useState(false);
   const [currentBlock, setCurrentBlock] = useState(19842109);
@@ -22,7 +21,7 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
   }, []);
 
   const copyInstall = () => {
-    navigator.clipboard.writeText('npm install @paythos/sdk @paythos/x402');
+    navigator.clipboard.writeText('npm install paythos-sdk viem');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -63,9 +62,9 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
 
             <nav className="hidden lg:flex items-center gap-6 font-mono text-xs">
               <Link href="/" className="text-white border-b-2 border-white pb-1 font-medium">Protocol Hub</Link>
-              <Link href="/gofer" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Gofer Errand Desk</Link>
-              <a href="https://github.com/Web3Manuel001/paythos" target="_blank" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Documentation</a>
-              <a href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" target="_blank" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Telemetry</a>
+              <a href="#playground" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Code Workspace</a>
+              <a href="#architecture" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Architecture</a>
+              <a href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" target="_blank" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Basescan</a>
             </nav>
           </div>
 
@@ -85,7 +84,7 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
               </button>
             ) : (
               <button onClick={login} className="px-4 py-1.5 bg-white text-[#131315] font-mono text-xs font-semibold rounded hover:bg-[#e2e2e2] transition-colors">
-                Connect Agent
+                Connect Wallet
               </button>
             )}
           </div>
@@ -109,17 +108,17 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
               <span>x402 v2 Protocol Spec Standardized</span>
             </div>
             <div className="text-[#c4c7c8]">
-              Verified on Base Sepolia: <a href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" target="_blank" className="text-white underline">0xf57c...8347</a>
+              Live Contract: <a href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" target="_blank" className="text-white underline">0xf57c...8347</a>
             </div>
           </div>
         </section>
 
-        {/* Hero Title & Terminal Bar */}
+        {/* Hero Title & Command Bar */}
         <section className="w-full px-6 sm:px-8 py-16 bg-[#131315]">
           <div className="max-w-5xl mx-auto flex flex-col items-start gap-6">
             <div className="flex items-center gap-2 font-mono text-[11px]">
               <span className="px-2 py-0.5 bg-[#2a2a2c] text-white uppercase tracking-wider rounded">
-                Autonomous On-Chain Value Transfer
+                Autonomous Financial Infrastructure
               </span>
               <span className="text-[#8e9192]">RFC-9402 Compliance Engine</span>
             </div>
@@ -129,16 +128,16 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
                 The Monetary Ethos for Autonomous AI Agents
               </h1>
               <p className="text-base sm:text-lg text-[#c4c7c8] max-w-3xl leading-relaxed font-normal">
-                Paythos is an institutional x402 payment primitive built natively for LLMs, agent runtimes, and autonomous errand swarms on Base L2. Stream sub-cent micropayments, sign programmatic escrow, and settle compute API calls deterministically.
+                Paythos is non-custodial session vault and x402 payment infrastructure built natively for LLMs, agent runtimes, and autonomous swarms on Base L2. Stream sub-cent micropayments, enforce mathematical spend guardrails, and settle compute API calls deterministically.
               </p>
             </div>
 
-            {/* Copyable NPM Command Bar */}
+            {/* 1-Click Copyable Command Bar */}
             <div className="w-full max-w-3xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 bg-[#0e0e10] p-2.5 rounded border border-[#444748]/60 shadow-xl">
               <div className="flex items-center gap-3 px-2 overflow-x-auto">
                 <span className="text-[#8e9192] select-none font-mono text-sm">$</span>
                 <code className="font-mono text-sm text-white font-medium tracking-tight whitespace-nowrap">
-                  npm install @paythos/sdk @paythos/x402
+                  npm install paythos-sdk viem
                 </code>
                 <span className="bg-[#201f22] px-1.5 py-0.5 font-mono text-[10px] text-[#c4c7c8] rounded shrink-0">v0.1.0</span>
               </div>
@@ -152,22 +151,22 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
               </div>
             </div>
 
-            {/* CTAs */}
+            {/* Action CTAs */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              <Link 
-                href="/gofer" 
+              <a 
+                href="#playground" 
                 className="px-5 py-2.5 bg-white text-[#131315] font-mono text-xs font-semibold rounded hover:bg-[#e2e2e2] transition-all flex items-center gap-2 shadow-lg shadow-white/5"
               >
-                <span>Launch Gofer Errand Desk</span>
+                <span>View Integration Code</span>
                 <span>➔</span>
-              </Link>
+              </a>
               <a 
                 href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" 
                 target="_blank"
                 className="px-5 py-2.5 bg-[#201f22] hover:bg-[#2a2a2c] border border-[#444748] text-white font-mono text-xs rounded transition-all flex items-center gap-2"
               >
                 <span className="w-1.5 h-1.5 bg-[#4edea3] rounded-full"></span>
-                <span>View Base Sepolia Contract</span>
+                <span>Verified Base Sepolia Contract</span>
               </a>
             </div>
           </div>
@@ -227,7 +226,7 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
         </section>
 
         {/* 4. CODE PLAYGROUND */}
-        <section className="w-full px-6 sm:px-8 py-16 bg-[#131315]">
+        <section id="playground" className="w-full px-6 sm:px-8 py-16 bg-[#131315]">
           <div className="max-w-5xl mx-auto flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
               <div>
@@ -262,7 +261,7 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
 
               <div className="p-6 font-mono text-xs leading-relaxed overflow-x-auto text-zinc-300">
                 <pre><code>{tab === 'sdk' ? (
-`import { Paythos } from "@paythos/sdk";
+`import { Paythos } from "paythos-sdk";
 
 const agent = new Paythos({
   privateKey: process.env.AGENT_SESSION_KEY,
@@ -277,7 +276,7 @@ const { data, costPaid, txHash } = await agent.fetchWithPayment(
 
 console.log("Unlocked data:", data, "Settled on Base:", txHash);`
                 ) : (
-`import { createX402Paywall } from "@paythos/sdk/middleware";
+`import { createX402Paywall } from "paythos-sdk/middleware";
 import http from "http";
 
 const paywall = createX402Paywall({
@@ -308,7 +307,7 @@ const server = http.createServer((req, res) => {
         </section>
 
         {/* 5. 3-PANEL DETERMINISTIC ARCHITECTURE */}
-        <section className="w-full px-6 sm:px-8 py-16 bg-[#1c1b1d] border-t border-[#444748]/40">
+        <section id="architecture" className="w-full px-6 sm:px-8 py-16 bg-[#1c1b1d] border-t border-[#444748]/40">
           <div className="max-w-5xl mx-auto flex flex-col gap-8">
             <div>
               <span className="font-mono text-xs text-[#8e9192] uppercase tracking-wider">Deterministic Architecture</span>
@@ -325,7 +324,7 @@ const server = http.createServer((req, res) => {
                   </p>
                 </div>
                 <div className="bg-[#0e0e10] p-2.5 rounded font-mono text-[11px] text-[#4edea3]">
-                  <code>AgentVault.sessions(agentKey)</code>
+                  <code>PaythosVault.sessions(agentKey)</code>
                 </div>
               </div>
 
