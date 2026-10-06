@@ -1,0 +1,27 @@
+{
+  "name": "agentpay",
+  "version": "0.1.0",
+  "description": "Non-custodial session policies, spend guardrails, and x402 v2 settlement for autonomous AI agents on Base.",
+  "type": "module",
+  "main": "./sdk/dist/index.js",
+  "types": "./sdk/dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./sdk/dist/index.js",
+      "types": "./sdk/dist/index.d.ts"
+    },
+    "./middleware": {
+      "import": "./sdk/dist/middleware.js",
+      "types": "./sdk/dist/middleware.d.ts"
+    },
+    "./blueprints": {
+      "import": "./sdk/dist/brain/blueprints.js",
+      "types": "./sdk/dist/brain/blueprints.d.ts"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Web3Manuel001/agentpay.git"
+  },
+  "license": "MIT"
+}
