@@ -1,7 +1,7 @@
 {
-  "name": "@web3manuel001/agentpay-sdk",
+  "name": "paythos-sdk",
   "version": "1.0.0",
-  "description": "",
+  "description": "Paythos — Non-custodial session policies & x402 settlement protocol for autonomous agents on Base.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

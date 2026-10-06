@@ -155,3 +155,27 @@ agentpay/
 └── README.md
 📜 License
 MIT License. Built for the open machine economy on Base.
+
+---
+
+## ⚡ 1-Click Host Installation (Claude Code & Cursor)
+
+Install the CLI and auto-detect your AI editor environments (Cursor & Claude Desktop) in one command:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Web3Manuel001/agentpay/main/install.sh | bash
+🛡️ Enterprise Policy Sets & Verifiable Intent
+AgentPay implements a 3-tier safety threshold model with cryptographic intent attribution:
+code
+TypeScript
+import { PolicyEngine } from 'agentpay';
+
+const policy = new PolicyEngine({
+  maxPerTransactionUsdc: 2.00,   // Sub-$2 auto-executes via x402
+  dailyCapUsdc: 20.00,           // Hard daily ceiling
+  approvalThresholdUsdc: 5.00,   // $5+ pauses and triggers Human-in-the-Loop approval
+  destinationAllowlist: ['0x...'] // Only approved contracts
+});
+
+// Attaches cryptographic proof of the user's prompt to the on-chain receipt
+const attestation = policy.generateIntentAttestation("Audit Base liquidity");

@@ -23,7 +23,10 @@ export interface SessionStatus {
   isActive: boolean;
 }
 
-export class AgentPay {
+/**
+ * Paythos — Non-custodial session policies & x402 settlement client for autonomous agents on Base.
+ */
+export class Paythos {
   public publicClient: any;
   public walletClient: any;
   public account: Account;
@@ -50,6 +53,8 @@ export class AgentPay {
       transport,
     });
   }
+
+  // --- AGENT ACTIONS ---
 
   async getSessionStatus(agentAddress?: Address): Promise<SessionStatus> {
     const target = agentAddress || this.account.address;
@@ -176,6 +181,8 @@ export class AgentPay {
     };
   }
 
+  // --- OWNER CONTROLS ---
+
   async createSession(params: {
     agentAddress: Address;
     dailyLimitUsdc: string;
@@ -206,3 +213,6 @@ export class AgentPay {
     return hash;
   }
 }
+
+// Backwards-compatible export
+export { Paythos as AgentPay };

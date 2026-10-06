@@ -22,7 +22,7 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
   }, []);
 
   const copyInstall = () => {
-    navigator.clipboard.writeText('npm install @agentpay/sdk @agentpay/x402');
+    navigator.clipboard.writeText('npm install @paythos/sdk @paythos/x402');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -56,22 +56,22 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
         <div className="h-16 px-6 sm:px-8 flex items-center justify-between gap-6">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2.5">
-              <img src="/logo.svg" alt="AgentPay" className="h-8 w-8 object-contain" />
-              <span className="text-xl font-semibold text-white tracking-tight">AgentPay</span>
+              <img src="/logo.svg" alt="Paythos" className="h-8 w-8 object-contain" />
+              <span className="text-xl font-semibold text-white tracking-tight">Paythos</span>
               <span className="font-mono text-[11px] px-1.5 py-0.5 bg-[#2a2a2c] border border-[#444748] text-[#c4c7c8] rounded">v0.1.0</span>
             </div>
 
             <nav className="hidden lg:flex items-center gap-6 font-mono text-xs">
               <Link href="/" className="text-white border-b-2 border-white pb-1 font-medium">Protocol Hub</Link>
               <Link href="/gofer" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Gofer Errand Desk</Link>
-              <a href="https://github.com/Web3Manuel001/agentpay" target="_blank" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Documentation</a>
+              <a href="https://github.com/Web3Manuel001/paythos" target="_blank" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Documentation</a>
               <a href="https://sepolia.basescan.org/address/0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347" target="_blank" className="text-[#c4c7c8] hover:text-white transition-colors pb-1">Telemetry</a>
             </nav>
           </div>
 
           <div className="flex items-center gap-3">
             <a 
-              href="https://github.com/Web3Manuel001/agentpay" 
+              href="https://github.com/Web3Manuel001/paythos" 
               target="_blank" 
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-[#444748] text-[#c4c7c8] hover:text-white hover:border-[#8e9192] font-mono text-xs rounded transition-all"
             >
@@ -126,10 +126,10 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
 
             <div className="flex flex-col gap-3 max-w-4xl">
               <h1 className="text-4xl sm:text-6xl font-bold text-white tracking-tight leading-[1.08]">
-                The Monetary Spine for Autonomous AI Agents
+                The Monetary Ethos for Autonomous AI Agents
               </h1>
               <p className="text-base sm:text-lg text-[#c4c7c8] max-w-3xl leading-relaxed font-normal">
-                AgentPay is an institutional x402 payment primitive built natively for LLMs, agent runtimes, and autonomous errand swarms on Base L2. Stream sub-cent micropayments, sign programmatic escrow, and settle compute API calls deterministically.
+                Paythos is an institutional x402 payment primitive built natively for LLMs, agent runtimes, and autonomous errand swarms on Base L2. Stream sub-cent micropayments, sign programmatic escrow, and settle compute API calls deterministically.
               </p>
             </div>
 
@@ -138,7 +138,7 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
               <div className="flex items-center gap-3 px-2 overflow-x-auto">
                 <span className="text-[#8e9192] select-none font-mono text-sm">$</span>
                 <code className="font-mono text-sm text-white font-medium tracking-tight whitespace-nowrap">
-                  npm install @agentpay/sdk @agentpay/x402
+                  npm install @paythos/sdk @paythos/x402
                 </code>
                 <span className="bg-[#201f22] px-1.5 py-0.5 font-mono text-[10px] text-[#c4c7c8] rounded shrink-0">v0.1.0</span>
               </div>
@@ -262,9 +262,9 @@ try { const p = usePrivy(); login = p.login; logout = p.logout; authenticated = 
 
               <div className="p-6 font-mono text-xs leading-relaxed overflow-x-auto text-zinc-300">
                 <pre><code>{tab === 'sdk' ? (
-`import { AgentPay } from "@agentpay/sdk";
+`import { Paythos } from "@paythos/sdk";
 
-const agent = new AgentPay({
+const agent = new Paythos({
   privateKey: process.env.AGENT_SESSION_KEY,
   vaultAddress: "0xf57c0cEBc9238A3fe10dE6f05fa017aC68878347", // Live Base Sepolia
   rpcUrl: "https://sepolia.base.org"
@@ -277,7 +277,7 @@ const { data, costPaid, txHash } = await agent.fetchWithPayment(
 
 console.log("Unlocked data:", data, "Settled on Base:", txHash);`
                 ) : (
-`import { createX402Paywall } from "@agentpay/sdk/middleware";
+`import { createX402Paywall } from "@paythos/sdk/middleware";
 import http from "http";
 
 const paywall = createX402Paywall({
@@ -364,7 +364,7 @@ const server = http.createServer((req, res) => {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-[#4edea3]"></span>
-            <span className="text-white font-medium">AgentPay Foundation</span>
+            <span className="text-white font-medium">Paythos Foundation</span>
             <span>· MIT / Apache 2.0 Dual License</span>
           </div>
           <div>Base Sepolia Contract: 0xf57c...8347</div>
