@@ -214,4 +214,5 @@ export class Paythos {
   }
 }
 
+// Exactly one alias export for complete backwards-compatibility
 export { Paythos as AgentPay };
