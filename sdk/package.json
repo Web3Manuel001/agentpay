@@ -1,5 +1,5 @@
 {
-  "name": "agentpay-sdk",
+  "name": "@web3manuel001/agentpay-sdk",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,5 +19,9 @@
     "@types/node": "^26.6.4",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
-  }
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "files": "[\"dist\", \"README.md\"]"
 }

@@ -23,3 +23,6 @@ export { getBaseTelemetry } from './tools/telemetry.js';
 export { getVaultAllowance } from './tools/vault.js';
 export { executeOutboundPayment } from './tools/payments.js';
 export { stageAerodromeSwap } from './tools/swaps.js';
+
+// --- POLICY ENGINE & VERIFIABLE INTENT ---
+export { PolicyEngine, type PolicyRuleSet, type IntentAttestation } from './core/policy.js';
